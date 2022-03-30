@@ -1,6 +1,11 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" 
+    :model="loginForm" 
+    :rules="loginRules" 
+    class="login-form" 
+    auto-complete="on" 
+    label-position="left">
 
       <div class="title-container">
         <h3 class="title">Login Form</h3>
@@ -30,7 +35,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -53,30 +58,35 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { isvalidUsername } from '@/utils/validate'
+  import {setSupport,getSupport,setCookie,getCookie} from '@/utils/support';
 
 export default {
   name: 'Login',
   data() {
+    //用户规则
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!isvalidUsername(value)) {
+        callback(new Error('请输入正确的用户名'))
       } else {
         callback()
       }
     }
+    //密码规则
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不能小于6位'))
       } else {
         callback()
       }
     }
     return {
+      //登录参数
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
+      //登录规则
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
@@ -86,15 +96,28 @@ export default {
       redirect: undefined
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
+  // watch: {
+  //   $route: {
+  //     handler: function(route) {
+  //       this.redirect = route.query && route.query.redirect
+  //     },
+  //     immediate: true
+  //   }
+  // },
+      //created 方法是在页面渲染时候调用的 ；
+    created() {
+      this.loginForm.username = getCookie("username");
+      this.loginForm.password = getCookie("password");
+      if(this.loginForm.username === undefined||this.loginForm.username==null||this.loginForm.username===''){
+        this.loginForm.username = 'admin';
+      }
+      if(this.loginForm.password === undefined||this.loginForm.password==null){
+        this.loginForm.password = '';
+      }
+    },
+    //method 中的方法是在页面渲染后调用的 ；
   methods: {
+    //显示密码
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -105,18 +128,21 @@ export default {
         this.$refs.password.focus()
       })
     },
+    //登录事件
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+          this.$store.dispatch('Login', this.loginForm).then(() => {
+            setCookie("username",this.loginForm.username,15);
+              setCookie("password",this.loginForm.password,15);
+            this.$router.push({ path: this.redirect || '/' })//登录成功之后重定向到首页
             this.loading = false
           }).catch(() => {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          console.log('参数验证不合法！!')
           return false
         }
       })

@@ -1,97 +1,102 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
 
-const getDefaultState = () => {
-  return {
-    token: getToken(),
-    name: '',
-    avatar: ''
-  }
-}
+//修改const体现封装思想
+const user = {
+    state: {
+        token: getToken(),
+        name: '',
+        avatar: '',
+        roles: []
+    },
 
-const state = getDefaultState()
 
-const mutations = {
-  RESET_STATE: (state) => {
-    Object.assign(state, getDefaultState())
-  },
-  SET_TOKEN: (state, token) => {
-    state.token = token
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  }
-}
 
-const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('Verification failed, please Login again.')
+    mutations: {
+        // RESET_STATE: (state) => {
+        //   Object.assign(state, getDefaultState())
+        // },
+        SET_TOKEN: (state, token) => {
+            state.token = token
+        },
+        SET_NAME: (state, name) => {
+            state.name = name
+        },
+        SET_AVATAR: (state, avatar) => {
+            state.avatar = avatar
+        },
+        SET_ROLES: (state, roles) => {
+            state.roles = roles
         }
+    },
 
-        const { name, avatar } = data
+    actions: {
+        // 登录
+        Login({ commit }, userInfo) {
+            const username = userInfo.username.trim()
+            return new Promise((resolve, reject) => {
+                login(username, userInfo.password).then(response => {
+                    const data = response.data
+                    const tokenStr = data.tokenHead + data.token
+                    setToken(tokenStr)
+                    commit('SET_TOKEN', tokenStr)
+                    resolve()
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
+        //  获取用户信息
+        GetInfo({ commit, state }) {
+            return new Promise((resolve, reject) => {
+                getInfo(state.token).then(response => {
+                    const data = response.data //后端获取数据
+                    if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+                        commit('SET_ROLES', data.roles)
+                    } else {
+                        reject('认证失败，请重新登录!')
+                    }
+                    commit('SET_NAME', data.username) //要需改的地方
+                    commit('SET_AVATAR', data.userface) //要需改的地方
+                    resolve(response)
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
 
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
+        // 登出，添加了role，换了一种方式清空数据
+        logout({ commit, state }) {
+            return new Promise((resolve, reject) => {
+                logout(state.token).then(() => {
+                    commit('SET_TOKEN', '')
+                    commit('SET_ROLES', [])
+                    removeToken()
+                    resolve()
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+        // 前端 登出
+        FedLogOut({ commit }) {
+            return new Promise(resolve => {
+                commit('SET_TOKEN', '')
+                removeToken()
+                resolve()
+            })
+        }
+        // // remove token
+        // resetToken({ commit }) {
+        //   return new Promise(resolve => {
+        //     removeToken() // must remove  token  first
+        //     commit('RESET_STATE')
+        //     resolve()
+        //   })
+        // }
+    }
 
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
-  }
 }
 
-export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
-}
-
+export default user
