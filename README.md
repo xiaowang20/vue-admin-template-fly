@@ -63,3 +63,17 @@
    2. 在store/peimission.js中(vue-admin-template中没有可以在vue-element-admin中复制)。当用户登录后，获取用role，将role和路由表每个页面的需要的权限作比较，生成最终用户可访问的路由表（GenerateRoutes Action）。这里的代码说白了就是干了一件事，通过用户的权限和之前在router.js里面asyncRouterMap的每一个页面所需要的权限做匹配，最后返回一个该用户能够访问路由有哪些。
    3. 侧边栏
 ***
+问题
+1. ES6 新增了不少标识符，但浏览器大多无法直接识别，需要借助 babel 对 ES6 代码进行转义
+2. 项目启动时抛出如下错误，表示 … 运算符没能被识别，该运算符属于 ES6 的解构运算符
+3. 出现该问题的原因基本上可以定位是项目没有配置 babel 即使package.json 文件中已经引入 babel ，但仍然需要在项目根目录创建一个 .balbelrc 文件进行配置
+***
+
+## vue-cli脚手架
+***
+**配置**
+1. npm init -y
+2. npm install vue-cli -g
+3. vue init webpack --dirname
+   - 根据自己需要配置
+***
