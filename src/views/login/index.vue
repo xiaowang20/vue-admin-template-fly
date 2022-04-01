@@ -105,6 +105,7 @@
         }
       },
       handleLogin() {
+         debugger
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             // let isSupport = getSupport();
@@ -113,10 +114,12 @@
             //   return;
             // }
             this.loading = true;
+            debugger
             this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false;
               setCookie("username",this.loginForm.username,15);
               setCookie("password",this.loginForm.password,15);
+              debugger
               this.$router.push({path: '/'})
             }).catch(() => {
               this.loading = false

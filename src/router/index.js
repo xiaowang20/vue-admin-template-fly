@@ -31,23 +31,24 @@ export const constantRouterMap = [{
         hidden: true
     },
     {
-        path: '',
+        path: '/',
         component: Layout,
-        redirect: '/home',
+        redirect: '/dashboard',
         children: [{
-            path: 'home',
-            name: 'home',
+            path: 'dashboard',
+            name: 'dashboard',
             component: () =>
-                import ('@/views/home/index'),
+                import ('@/views/dashboard/index'),
             meta: { title: '首页', icon: 'home' }
         }]
     }
 ]
 
 export const asyncRouterMap = [
+
     //员工资料
     {
-        path: '/',
+        path: '/employee',
         component: Layout,
         redirect: '/employee',
         name: '员工资料',
