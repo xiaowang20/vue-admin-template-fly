@@ -39,7 +39,7 @@ export const constantRouterMap = [{
             name: 'dashboard',
             component: () =>
                 import ('@/views/dashboard/index'),
-            meta: { title: '首页', icon: 'home' }
+            meta: { title: '飞往', icon: 'home' }
         }]
     }
 ]
@@ -57,14 +57,14 @@ export const asyncRouterMap = [
                 path: 'basic',
                 name: '基本资料',
                 component: () =>
-                    import ('@/views/employee/basic'),
-                meta: { title: '基本资料', icon: 'product-list' }
+                    import ('@/views/employee/basic/index'),
+                meta: { title: '基本资料', icon: 'tree' }
             },
             {
                 path: 'advanced',
                 name: '高级资料',
                 component: () =>
-                    import ('@/views/employee/advanced'),
+                    import ('@/views/employee/advanced/index'),
                 meta: { title: '高级资料', icon: 'product-list' }
             },
         ]

@@ -30,7 +30,7 @@ const user = {
         Login({ commit }, userInfo) {
             const username = userInfo.username.trim()
                 //登录debugger1
-            debugger
+                // debugger
             return new Promise((resolve, reject) => {
                 //resolve，reject，分别表示异步操作执行成功后的回调函数和异步操作执行失败后的回调函数.
                 console.log("登录方法")
@@ -49,10 +49,10 @@ const user = {
         // 获取用户信息
         GetInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
-                debugger
+                // debugger
                 //登录debugger2
                 getInfo().then(response => {
-                    debugger
+                    // debugger
                     const data = response.data
                     if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
                         commit('SET_ROLES', data.roles)
