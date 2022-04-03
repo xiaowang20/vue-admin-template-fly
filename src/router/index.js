@@ -31,7 +31,7 @@ export const constantRouterMap = [{
         hidden: true
     },
     {
-        path: '/',
+        path: '',
         component: Layout,
         redirect: '/dashboard',
         children: [{
@@ -43,12 +43,11 @@ export const constantRouterMap = [{
         }]
     }
 ]
-
 export const asyncRouterMap = [
 
     //员工资料
     {
-        path: '/employee',
+        path: '/emp',
         component: Layout,
         redirect: '/employee',
         name: '员工资料',
@@ -58,30 +57,31 @@ export const asyncRouterMap = [
                 name: '基本资料',
                 component: () =>
                     import ('@/views/employee/basic/index'),
-                meta: { title: '基本资料', icon: 'tree' }
+                meta: { title: '基本资料', icon: 'product-list' }
             },
             {
-                path: 'advanced',
+                path: 'adv',
                 name: '高级资料',
                 component: () =>
                     import ('@/views/employee/advanced/index'),
                 meta: { title: '高级资料', icon: 'product-list' }
-            },
+            }
+
         ]
     },
     //人事管理
     {
-        path: '/personnel',
+        path: '/per',
         component: Layout,
         redirect: '/personnel',
         name: '人事管理',
         meta: { title: '人事管理', icon: 'product' },
         children: [{
                 path: 'emp',
-                name: '员工资料',
+                name: '人事员工资料',
                 component: () =>
                     import ('@/views/personnel/emp'),
-                meta: { title: '员工资料', icon: 'product-list' }
+                meta: { title: '人事员工资料', icon: 'product-list' }
             },
             {
                 path: 'ec',
@@ -210,10 +210,10 @@ export const asyncRouterMap = [
             },
             {
                 path: 'cfg',
-                name: '系统管理',
+                name: '系统配置管理',
                 component: () =>
                     import ('@/views/system/cfg'),
-                meta: { title: '系统管理', icon: 'product-list' }
+                meta: { title: '系统配置管理', icon: 'product-list' }
             },
             {
                 path: 'log',

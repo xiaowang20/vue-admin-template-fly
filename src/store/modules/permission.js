@@ -79,9 +79,11 @@ const permission = {
     actions: {
         GenerateRoutes({ commit }, data) {
             return new Promise(resolve => {
+
                 const { menus } = data;
                 const { username } = data;
                 const accessedRouters = asyncRouterMap.filter(v => {
+
                     //admin帐号直接返回所有菜单
                     // if(username==='admin') return true;
                     if (hasPermission(menus, v)) {
@@ -101,6 +103,7 @@ const permission = {
                 });
                 //对菜单进行排序
                 // sortRouters(accessedRouters);
+
                 commit('SET_ROUTERS', accessedRouters);
                 resolve();
             })

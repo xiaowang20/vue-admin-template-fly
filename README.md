@@ -67,6 +67,7 @@
 1. ES6 新增了不少标识符，但浏览器大多无法直接识别，需要借助 babel 对 ES6 代码进行转义
 2. 项目启动时抛出如下错误，表示 … 运算符没能被识别，该运算符属于 ES6 的解构运算符
 3. 出现该问题的原因基本上可以定位是项目没有配置 babel 即使package.json 文件中已经引入 babel ，但仍然需要在项目根目录创建一个 .balbelrc 文件进行配置
+4. 路由挂在只与后端表中的name字段有关。
 ***
 
 ## vue-cli脚手架
@@ -77,3 +78,25 @@
 3. vue init webpack --dirname
    - 根据自己需要配置
 ***
+
+### 第二步
+#### 开发员工详情
+1. **要注意使用axios传参问题**
+- 使用vue有两种传参形式：data和params
+- 因为params是添加到url的请求字符串中的，用于get请求。
+>例：http://127.0.0.1:8110/admin/core/userInfo/list/1/5?mobile=12345678912
+- 而data是添加到请求体（body）中的， 用于post请求。
+> 如果前端请求的方式是 post，并且后端的HTTP请求为 @PostMapping，那么后端的参数上面要写 @RequestBody ，而且前端传递参数的时候要写 data，因为是 Json 传参。 因为用post请求使用data传参的时候，参数是放在请求体中的，所以地址栏上也不显示具体的参数。
+- 
+2. **在index.vue中编写模板**
+- 开发员工详情需要：
+   - 表格
+   - 分页插件
+- vue的生命周期也是很重要的。
+   - created ：在模板渲染成HTML或模板编译进入路由前调用。
+   > 使用：即通常初始化某些属性值
+   - mounted : 在模板渲染成HTML之后调用。
+   > 使用:你会发现在created中无法对chart进行一些初始化配置，一定要等这个html渲染完后才可以进行。（使用组件时调用）
+   - methods : 混入到vue实例中，方法中的this可以指向data中的数据。
+   - watch : Vue 实例将会在实例化时调用 $watch()，遍历 watch 对象的每一个 property。
+   > 就是监听数据，如果方法数据改变，就动态传值

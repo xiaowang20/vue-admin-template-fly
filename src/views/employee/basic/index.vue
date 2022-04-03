@@ -1,137 +1,178 @@
 <template>
-<!-- 表单 -->
- <div style="margin-top: 10px">
-<el-table
-     stripe
-    :data="tableData"
-    v-loading="loading"
-    element-loading-text="正在加载..."
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-    style="width: 100%"
-    height="250">
-    <el-table-column
-      fixed
-      prop="date"
-      label="日期"
-      width="150">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="province"
-      label="省份"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="city"
-      label="市区"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="地址"
-      width="300">
-    </el-table-column>
-    <el-table-column
-      prop="zip"
-      label="邮编"
-      width="120">
-    </el-table-column>
-  </el-table>
-  <!-- 分页 -->
- <div style="display: flex;justify-content: flex-end">
-    
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
-    </el-pagination>
+<div>
+  <!-- 表单 -->
+  <div class="table-container">
+    <el-table
+      stripe
+      :data="list"
+      v-loading="loading"
+      element-loading-text="正在加载..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
+      style="width: 100%"
+      height="250"
+    >
+      <el-table-column type="selection" width="55"> </el-table-column>
+      <el-table-column prop="name" fixed align="left" label="姓名" width="90">
+      </el-table-column>
+      <el-table-column prop="workid" label="工号" align="left" width="85">
+      </el-table-column>
+      <el-table-column prop="gender" label="性别" align="left" width="85">
+      </el-table-column>
+      <el-table-column prop="birthday" width="95" align="left" label="出生日期">
+      </el-table-column>
+      <el-table-column
+        prop="idcard"
+        width="165"
+        align="left"
+        label="身份证号码"
+      >
+      </el-table-column>
+      <el-table-column prop="wedlock" width="70" label="婚姻状况">
+      </el-table-column>
+      <el-table-column prop="nation.name" width="50" label="民族">
+      </el-table-column>
+      <el-table-column prop="nativeplace" width="80" label="籍贯">
+      </el-table-column>
+      <el-table-column prop="politicsstatus.name" label="政治面貌">
+      </el-table-column>
+      <el-table-column prop="email" width="180" align="left" label="电子邮件">
+      </el-table-column>
+      <el-table-column prop="phone" width="120" align="left" label="电话号码">
+      </el-table-column>
+      <el-table-column prop="address" width="220" align="left" label="联系地址">
+      </el-table-column>
+      <el-table-column
+        prop="department.name"
+        width="100"
+        align="left"
+        label="所属部门"
+      >
+      </el-table-column>
+      <el-table-column prop="position.name" width="100" label="职位">
+      </el-table-column>
+      <el-table-column prop="joblevel.name" width="100" label="职称">
+      </el-table-column>
+      <el-table-column
+        prop="engageform"
+        width="100"
+        align="left"
+        label="聘用形式"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="tiptopDegree"
+        width="80"
+        align="left"
+        label="最高学历"
+      >
+      </el-table-column>
+      <el-table-column prop="specialty" width="150" align="left" label="专业">
+      </el-table-column>
+      <el-table-column prop="school" width="150" align="left" label="毕业院校">
+      </el-table-column>
+      <el-table-column
+        prop="begindate"
+        width="95"
+        align="left"
+        label="入职日期"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="conversiontime"
+        width="95"
+        align="left"
+        label="转正日期"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="begincontract"
+        width="95"
+        align="left"
+        label="合同起始日期"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="endcontract"
+        width="95"
+        align="left"
+        label="合同截止日期"
+      >
+      </el-table-column>
+      <el-table-column width="100" align="left" label="合同期限">
+        <template slot-scope="scope">
+          <el-tag>{{ scope.row.contractterm }}</el-tag>
+          年
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
+      <!-- 分页 -->
+    <div class="pagination-container">
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="pageParams.pageNum"
+        :page-sizes="[5,10,15]"
+        :page-size.sync="pageParams.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
     </div>
-
-
-
-
- 
+    </div>
 </template>
 <script>
-  export default {
-    methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+import employee from "@/api/employee";
+export default {
+  name: "basicList",
+  data() {
+    return {
+      loading: false,
+      pageParams: {
+        pageNum: 0,
+        pageSize: 10,
+        keyword: null
       },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      }
+      list: [],
+      total: 0,
+      totalPage: 0,
+    };
+  },
+  created() {
+    this.initData();
+  },
+  methods: {
+    /**
+     * 初始化数据
+     */
+    initData() {
+      this.loading = true;
+      employee
+        .getAllEmps(
+          this.pageParams.pageNum,
+          this.pageParams.pageSize,
+          this.pageParams.keyword
+        )
+        .then((res) => {
+          this.loading = false;
+          this.list = res.data.list;
+          this.total = res.data.total;
+          this.pageNum = res.data.pageNum
+          this.pageSize = res.data.pageSize
+          this.totalPage = res.data.totalPage;
+        });
     },
-    data() {
-      return {
-          loading:false,
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4,
-        
-                tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-08',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-06',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-07',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }]
-      };
-    }
-  }
+
+    handleSizeChange(val) {
+      this.pageParams.pageSize = val;
+      this.initData();
+    },
+    handleCurrentChange(val) {
+      this.pageParams.pageNum = val;
+      this.initData();
+    },
+  },
+};
 </script>

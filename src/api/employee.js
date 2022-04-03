@@ -5,13 +5,11 @@ import request from '@/utils/request'
  * @returns 
  */
 export default {
-    getAllEmps() {
+    getAllEmps(params) {
         return request({
-            url: `/Emp/getEmp`,
+            url: `/Emp/getAllEmp`,
             method: `get`,
-            data: {
-
-            }
+            params: params
         })
     }
 }
