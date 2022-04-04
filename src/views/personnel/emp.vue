@@ -49,7 +49,7 @@
   </div>
 </template>
 <script>
-import employee from "@/api/employee";
+import {getAllEmps} from "@/api/employee";
 export default {
   name: "basicList",
   data() {
@@ -77,8 +77,8 @@ export default {
      */
     initData() {
       this.loading = true;
-      employee
-        .getAllEmps(
+     
+        getAllEmps(
           this.pageParams.pageNum,
           this.pageParams.pageSize,
           this.pageParams.keyword

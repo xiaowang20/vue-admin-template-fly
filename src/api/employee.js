@@ -4,12 +4,11 @@ import request from '@/utils/request'
  * @param {*} params 
  * @returns 
  */
-export default {
-    getAllEmps(params) {
-        return request({
-            url: `/Emp/getAllEmp`,
-            method: `get`,
-            params: params
-        })
-    }
+
+export function getAllEmps(params) {
+    return request({
+        url: 'Emp/getAllEmp/',
+        method: 'get',
+        params: params
+    })
 }
