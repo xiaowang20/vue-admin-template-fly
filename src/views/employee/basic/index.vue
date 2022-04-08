@@ -1,5 +1,7 @@
 <template>
 <div>
+<div style="display: flex; justify-content: space-between">
+  <!-- 搜索框 -->
   <div >
           <el-input
             placeholder="请输入员工名进行搜索，可以直接回车搜索..."
@@ -18,27 +20,34 @@
           >
             搜索
           </el-button>
-              
-        <!-- <div>
-          <i class="el-icon-search"></i>
-          <span>筛选搜索</span>
-          <el-button
-            style="float: right"
-            @click="searchBrandList()"
-            type="primary"
-            size="small">
-            查询结果
-          </el-button>
-        </div>
-        <div style="margin-top: 15px">
-          <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-            <el-form-item label="输入搜索：">
-              <el-input style="width: 203px" v-model="listQuery.keyword" placeholder="品牌名称/关键字"></el-input>
-            </el-form-item>
-          </el-form>
-        </div> -->
+  <!-- 导入数据框 -->
   </div>
-
+  <div>
+    <el-upload
+      :show-file-list="false"
+      :before-upload="beforeUpload"
+      :on-success="onSuccess"
+      :on-error="onError"
+      :disabled="importDataDisabled"
+      style="display: inline-flex; margin-right: 8px"
+      action="GLOBAL_API+'/data/upload'"
+    >
+      <el-button
+        :disabled="importDataDisabled"
+        type="success"
+        icon="el-icon-upload2"
+      >
+        {{ importDataBtnText }}
+      </el-button>
+    </el-upload>
+    <el-button type="success" @click="exportDataTest" icon="el-icon-download">
+      导出数据
+    </el-button>
+    <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
+      添加用户
+    </el-button>
+  </div>
+</div>
 <!-- 表格 -->
     <div style="margin-top: 10px">
       <el-table
@@ -184,6 +193,7 @@
 </template>
 <script>
 import {getAllEmps} from "@/api/employee";
+import {upload,exportData} from "@/api/data"
 export default {
   name: "basicList",
   data() {
@@ -198,12 +208,47 @@ export default {
       list:[],
       total: 0,
       totalPage: 0,
+      importDataBtnText:"导入数据",
+      importDataDisabled:false,
+      GLOBAL_API:process.env.BASE_API
+      
     }
   },
   created() {
     this.initData();
   },
   methods: {
+    /**
+     * 导出
+     */
+exportDataTest(){
+   window.open("/emp/basic/export");
+},
+    /**
+     * 上传数据之前操作
+     */
+        beforeUpload() {
+      this.importDataBtnText = "正在导入";
+      this.importDataBtnIcon = "el-icon-loading";
+      this.importDataDisabled = true;
+    },
+    /**
+     * 上传失败
+     */
+     onError(err, file, fileList) {
+      this.importDataBtnText = "导入数据";
+      this.importDataBtnIcon = "el-icon-upload2";
+      this.importDataDisabled = false;
+    },
+    /**
+     * 上传成功
+     */
+    onSuccess(response, file, fileList) {
+      this.importDataBtnText = "导入数据";
+      this.importDataBtnIcon = "el-icon-upload2";
+      this.importDataDisabled = false;
+      this.initData();
+    },
     /**
      * 根据姓名查询所有人
      */

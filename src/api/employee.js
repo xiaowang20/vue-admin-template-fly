@@ -12,3 +12,10 @@ export function getAllEmps(params) {
         params: params
     })
 }
+export function getAllEmpsByQuery(params) {
+    return request({
+        url: 'Emp/listPageQuery/',
+        method: 'post',
+        params: params
+    })
+}
