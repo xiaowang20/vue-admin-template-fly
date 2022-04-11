@@ -60,6 +60,14 @@ export const asyncRouterMap = [
                 meta: { title: '基本资料', icon: 'product-list' }
             },
             {
+                path: 'addEmpolyee',
+                name: 'addEmployee',
+                component: () =>
+                    import ('@/views/employee/basic/add'),
+                meta: { title: '添加员工', icon: 'product-list' },
+                hidden: true
+            },
+            {
                 path: 'adv',
                 name: '高级资料',
                 component: () =>

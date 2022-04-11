@@ -4,24 +4,22 @@ import request from '@/utils/request'
  * @param {*} params 
  * @returns 
  */
-export function upload(data) {
+export function upload(params) {
     return request({
         url: 'data/upload/',
         method: 'post',
-        data
-    })
-}
-/**
- * 导出
- * @returns 
- */
-export function exportData() {
-    return request({
-        url: 'data/export/',
-        method: 'get',
+        data: params,
+        headers: { "content-type": "multipart/form-data" }
     })
 }
 
+export function export2(params) {
+    return request({
+        url: 'data/export2/',
+        method: 'get',
+        params: params
+    })
+}
 /**
  * 获取政治面貌信息
  * @param {*} params 

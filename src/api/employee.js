@@ -19,3 +19,14 @@ export function getAllEmpsByQuery(params) {
         params: params
     })
 }
+/**
+ * 删除
+ */
+
+export function deleteById(id) {
+    return request({
+        url: `Emp/delete/${id}`,
+        method: 'delete'
+
+    })
+}

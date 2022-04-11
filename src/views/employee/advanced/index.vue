@@ -40,8 +40,8 @@
           <!-- 导入数据框 -->
         </div>
 
-        <!-- <div>
-          <el-upload
+        <div>
+          <!-- <el-upload
             :show-file-list="false"
             :before-upload="beforeUpload"
             :on-success="onSuccess"
@@ -57,14 +57,14 @@
             >
               {{ importDataBtnText }}
             </el-button>
-          </el-upload>
-          <el-button type="success" @click="exportData" icon="el-icon-download">
+          </el-upload> -->
+          <el-button type="success" @click="downLoad" icon="el-icon-download">
             导出数据
           </el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
+          <!-- <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
             添加用户
-          </el-button>
-        </div> -->
+          </el-button> -->
+        </div>
       </div>
       <!-- 搜索表单 -->
       <transition name="slide-fade">
@@ -360,7 +360,7 @@
 </template>
 <script>
 import { getAllEmpsByQuery } from "@/api/employee";
-import {getAllPoliticsStatus,getAllNations,getAllPositions,getAllJobLevels,getAllDepartments} from "@/api/data";
+import {export2,getAllPoliticsStatus,getAllNations,getAllPositions,getAllJobLevels,getAllDepartments} from "@/api/data";
 export default {
   name: "basicList",
   data() {
@@ -370,13 +370,12 @@ export default {
       pageParams: {
         pageNum: 1,
         pageSize: 10,
-        name: null,
-        politicId: null,
-        nationId: null,
-        departmentId: null,
-        jobLevelId: null,
-        engageForm: null,
-        positionId: null
+        name: '',
+        politicId: '',
+        nationId: '',
+        departmentId: '',
+        jobLevelId: '',
+        engageForm: '',
       },
       list: [],
       total: 0,
@@ -404,6 +403,12 @@ export default {
     this.initData();
   },
   methods: {
+      /**
+     * 导出
+     */
+    downLoad(){
+		location.href = "http://localhost:8081/data/export2?pageNum="+this.pageParams.pageNum+"&pageSize="+this.pageParams.pageSize
+		},
     /**
      * 初始化搜索数据
      */
@@ -510,7 +515,6 @@ export default {
     initData() {
       this.loading = true;
       getAllEmpsByQuery(this.pageParams).then((res) => {
-        debugger
         console.log(this.pageParams)
         this.loading = false;
         this.list = res.data.list;

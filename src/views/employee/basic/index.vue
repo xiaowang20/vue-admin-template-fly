@@ -1,54 +1,64 @@
 <template>
-<div>
-<div style="display: flex; justify-content: space-between">
-  <!-- 搜索框 -->
-  <div >
-          <el-input
-            placeholder="请输入员工名进行搜索，可以直接回车搜索..."
-            prefix-icon="el-icon-search"
-            clearable
-            style="width: 350px; margin-right: 10px"
-            @keydown.enter.native="initData"
-             v-model="pageParams.keyword"
-          >
-          </el-input>
-          <el-button
-            icon="el-icon-search"
-            type="primary"
-            @click="searchBrandList()"
-          
-          >
-            搜索
-          </el-button>
-  <!-- 导入数据框 -->
-  </div>
   <div>
-    <el-upload
-      :show-file-list="false"
-      :before-upload="beforeUpload"
-      :on-success="onSuccess"
-      :on-error="onError"
-      :disabled="importDataDisabled"
-      style="display: inline-flex; margin-right: 8px"
-      action="GLOBAL_API+'/data/upload'"
-    >
-      <el-button
-        :disabled="importDataDisabled"
-        type="success"
-        icon="el-icon-upload2"
-      >
-        {{ importDataBtnText }}
-      </el-button>
-    </el-upload>
-    <el-button type="success" @click="exportDataTest" icon="el-icon-download">
-      导出数据
-    </el-button>
-    <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
-      添加用户
-    </el-button>
-  </div>
-</div>
-<!-- 表格 -->
+    <div style="display: flex; justify-content: space-between">
+      <!-- 搜索框 -->
+      <div>
+        <el-input
+          placeholder="请输入员工名进行搜索，可以直接回车搜索..."
+          prefix-icon="el-icon-search"
+          clearable
+          style="width: 350px; margin-right: 10px"
+          @keydown.enter.native="initData"
+          v-model="pageParams.keyword"
+        >
+        </el-input>
+        <el-button
+          icon="el-icon-search"
+          type="primary"
+          @click="searchBrandList()"
+        >
+          搜索
+        </el-button>
+        <!-- 导入数据框 -->
+      </div>
+      <div>
+        <div>
+          <el-form>
+            <el-form-item label="导入员工数据,只支持xls格式文件" prop="file">
+              <el-upload
+                class="upload-demo"
+                ref="upload"
+                multiple
+                accept=".xls"
+                action=""
+                :http-request="httpRequest"
+                :file-list="fileList"
+                :auto-upload="false"
+              >
+                <el-button slot="trigger" size="small" type="primary"
+                  >选取文件</el-button
+                >
+                <el-button
+                  style="margin-left: 10px"
+                  size="small"
+                  type="primary"
+                  @click="submitUploadList"
+                  >上传</el-button
+                >
+              </el-upload>
+            </el-form-item>
+          </el-form>
+        </div>
+        <el-button type="success" @click="downLoad" icon="el-icon-download">
+          导出数据
+        </el-button>
+
+        <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
+          添加用户
+        </el-button>
+      </div>
+    </div>
+    <!-- 表格 -->
     <div style="margin-top: 10px">
       <el-table
         :data="list"
@@ -171,129 +181,187 @@
         <!-- 操作 -->
         <el-table-column fixed="right" width="150" align="center" label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit"  circle size="mini" @click="showEditEmpView(scope.row)">编辑</el-button>
-           <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="deleteEmp(scope.row)">删除</el-button>
+      <el-button type="primary" circle size="mini" icon="el-icon-edit" @click="showEditEmpView(scope.$index, scope.row)">编辑</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              circle
+              size="mini"
+              @click="deleteEmp(scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <div style="display: flex; justify-content: flex-end">
-         <el-pagination
-    :current-page.sync="pageParams.pageNum"
-    :page-sizes="[1,10,20,30,50]"
-    :page-size ="pageParams.pageSize"
-    :total="total"
-    background
-    layout="total, sizes, prev, pager, next, jumper"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange">
-    </el-pagination>
+        <el-pagination
+          auto-scroll="true"
+          :current-page.sync="pageParams.pageNum"
+          :page-sizes="[1, 10, 20, 30, 50]"
+          :page-size="pageParams.pageSize"
+          :total="total"
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
       </div>
     </div>
-    </div>
+  </div>
 </template>
 <script>
-import {getAllEmps} from "@/api/employee";
-import {upload,exportData} from "@/api/data"
+import { getAllEmps,deleteById } from "@/api/employee";
+import { upload } from "@/api/data";
 export default {
   name: "basicList",
   data() {
     return {
-        paginationShow:true,
-        loading: false,
-        pageParams:{
-        pageNum:1,
-        pageSize:10,
-        keyword:''
-        },
-      list:[],
+      paginationShow: true,
+      loading: false,
+      pageParams: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: "",
+      },
+      list: [],
       total: 0,
       totalPage: 0,
-      importDataBtnText:"导入数据",
-      importDataDisabled:false,
-      GLOBAL_API:process.env.BASE_API
-      
-    }
+      importDataBtnText: "导入数据",
+      importDataDisabled: false,
+      GLOBAL_API: process.env.BASE_API,
+      downloadLoading: false,
+      importDataBtnIcon: "el-icon-upload2",
+      fileList: [],
+    };
   },
   created() {
     this.initData();
   },
   methods: {
     /**
+     * 编辑
+     */
+    showEditEmpView(index,row){
+   this.$router.push({path:'/emp/addEmpolyee',query:{id:row.id}})
+    },
+ 
+    /**
+     * 删除
+     */
+    deleteEmp(data) {
+      this.$confirm(
+        "此操作将永久删除【" + data.name + "】, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+        deleteById(data.id).then((resp) => {
+            if (resp) {
+              this.initData();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    /**
      * 导出
      */
-exportDataTest(){
-   window.open("/emp/basic/export");
-},
+    downLoad() {
+      location.href =
+        " http://localhost:8081/data/export1?pageNum=" +
+        this.pageParams.pageNum +
+        "&pageSize=" +
+        this.pageParams.pageSize +
+        "&keyword=" +
+        this.pageParams.keyword;
+    },
     /**
      * 上传数据之前操作
      */
-        beforeUpload() {
+    beforeUpload() {
+      debugger;
       this.importDataBtnText = "正在导入";
       this.importDataBtnIcon = "el-icon-loading";
       this.importDataDisabled = true;
     },
     /**
-     * 上传失败
+     * 上传
      */
-     onError(err, file, fileList) {
-      this.importDataBtnText = "导入数据";
-      this.importDataBtnIcon = "el-icon-upload2";
-      this.importDataDisabled = false;
+    httpRequest(param) {
+      console.log(param);
+      let fileObj = param.file; // 相当于input里取得的files
+      let fd = new FormData(); // FormData 对象
+      fd.append("file", fileObj); // 文件对象
+
+      // let url = process.env.BASE_API + 'data/upload'
+      // let config = {
+      //   headers: {
+      //    'Content-Type': 'multipart/form-data'
+      //   }
+      // }
+      upload(fd).then((res) => {
+        console.log(res);
+      });
     },
     /**
-     * 上传成功
+     * 上传
      */
-    onSuccess(response, file, fileList) {
-      this.importDataBtnText = "导入数据";
-      this.importDataBtnIcon = "el-icon-upload2";
-      this.importDataDisabled = false;
-      this.initData();
+    submitUploadList() {
+      this.$refs.upload.submit();
     },
     /**
      * 根据姓名查询所有人
      */
     searchBrandList() {
-        this.pageParams.pageNum = 1;
-        this.initData();
-      },
-     /**
+      this.pageParams.pageNum = 1;
+      this.initData();
+    },
+    /**
      * 每页多少也有问题
      */
-   handleSizeChange(val) {
-      this.pageParams.pageNum=1;
-      this.pageParams.pageSize=val;
-      console.log(this.pageParams.pageSize)
+    handleSizeChange(val) {
+      this.pageParams.pageNum = 1;
+      this.pageParams.pageSize = val;
+      console.log(this.pageParams.pageSize);
       this.initData();
     },
     /**
      * 当前页获取有问题
      */
     handleCurrentChange(val) {
-      this.pageParams.pageNum=val;
-      console.log( this.pageParams.pageNum)
+      this.pageParams.pageNum = val;
+      console.log(this.pageParams.pageNum);
       this.initData();
-  },
+    },
     /**
      * 初始化数据
      */
     initData() {
       this.loading = true;
-      console.log(this.pageParams)
-      console.log(this.pageParams.keyword)
-        getAllEmps(this.pageParams)
-        .then(res => {
-          this.loading = false;
-          this.list = res.data.list;
-          this.total = res.data.total;
- 
-          // console.log(this.total);
-          console.log( this.list);
-          console.log(res.data.pageNum)
-          console.log(res.data.pageSize)
-          this.totalPage = res.data.totalPage;
-        });
+      console.log(this.pageParams);
+      console.log(this.pageParams.keyword);
+      getAllEmps(this.pageParams).then((res) => {
+        this.loading = false;
+        this.list = res.data.list;
+        this.total = res.data.total;
+
+        // console.log(this.total);
+        console.log(this.list);
+        console.log(res.data.pageNum);
+        console.log(res.data.pageSize);
+        this.totalPage = res.data.totalPage;
+      });
     },
-   
-}
+  },
 };
 </script>
