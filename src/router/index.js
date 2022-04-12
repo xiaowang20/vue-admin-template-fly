@@ -68,6 +68,14 @@ export const asyncRouterMap = [
                 hidden: true
             },
             {
+                path: 'updateEmpolyee',
+                name: 'updateEmployee',
+                component: () =>
+                    import ('@/views/employee/basic/update'),
+                meta: { title: '修改员工', icon: 'product-list' },
+                hidden: true
+            },
+            {
                 path: 'adv',
                 name: '高级资料',
                 component: () =>

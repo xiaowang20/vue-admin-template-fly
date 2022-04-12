@@ -53,7 +53,7 @@
           导出数据
         </el-button>
 
-        <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
+        <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView()">
           添加用户
         </el-button>
       </div>
@@ -240,10 +240,16 @@ export default {
   },
   methods: {
     /**
+     * 添加
+     */
+    showAddEmpView(){
+this.$router.push({path:'/emp/addEmpolyee'})
+    },
+    /**
      * 编辑
      */
     showEditEmpView(index,row){
-   this.$router.push({path:'/emp/addEmpolyee',query:{id:row.id}})
+   this.$router.push({path:'/emp/updateEmpolyee',query:{id:row.id}})
     },
  
     /**

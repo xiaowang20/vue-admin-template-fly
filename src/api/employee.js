@@ -30,3 +30,34 @@ export function deleteById(id) {
 
     })
 }
+/**
+ * 
+ * 添加员工
+ */
+export function addEmp(data) {
+    return request({
+        url: `Emp/add`,
+        method: 'post',
+        data: data
+    })
+}
+/**
+ * 通过编号获取员工信息
+ */
+export function getAllById(id) {
+    return request({
+        url: `Emp/getAllById/${id}`,
+        method: 'get'
+    })
+}
+/**
+ * 
+ * 通过编号修改员工
+ */
+export function updateEmp(id, data) {
+    return request({
+        url: `Emp/update/${id}`,
+        method: 'put',
+        data: data
+    })
+}

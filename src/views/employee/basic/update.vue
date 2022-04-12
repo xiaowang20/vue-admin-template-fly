@@ -1,5 +1,5 @@
 <template> 
-  <employee-detail :is-edit='false'></employee-detail>
+  <employee-detail :is-edit='true'></employee-detail>
 </template>
 <script>
   import EmployeeDetail from './components/EmployeeDetail'
