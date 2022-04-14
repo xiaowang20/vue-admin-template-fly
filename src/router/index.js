@@ -218,6 +218,51 @@ export const asyncRouterMap = [
         name: '系统管理',
         meta: { title: '系统管理', icon: 'product' },
         children: [{
+                path: 'adminManage',
+                name: 'admin',
+                component: () =>
+                    import ('@/views/system/admin/index'),
+                meta: { title: '用户管理', icon: 'product-list' }
+            },
+            {
+                path: 'roleManage',
+                name: 'role',
+                component: () =>
+                    import ('@/views/system/role/index'),
+                meta: { title: '角色管理', icon: 'product-list' }
+            },
+            // {
+            //     path: 'allocMenu',
+            //     name: 'allocMenu',
+            //     component: () =>
+            //         import ('@/views/system/role/allocMenu'),
+            //     meta: { title: '分配菜单', icon: 'product-list' },
+            //     hidden:true
+            // },
+            {
+                path: 'menuManage',
+                name: 'menu',
+                component: () =>
+                    import ('@/views/system/menu/index'),
+                meta: { title: '菜单管理', icon: 'product-list' }
+            },
+            {
+                path: 'addMenu',
+                name: 'addMenu',
+                component: () =>
+                    import ('@/views/system/menu/add'),
+                meta: { title: '添加菜单', icon: 'product-list' },
+                hidden: true
+            },
+            {
+                path: 'updateMenu',
+                name: 'updateMenu',
+                component: () =>
+                    import ('@/views/system/menu/update'),
+                meta: { title: '编辑菜单', icon: 'product-list' },
+                hidden: true
+            },
+            {
                 path: 'basic',
                 name: '基础信息设置',
                 component: () =>
