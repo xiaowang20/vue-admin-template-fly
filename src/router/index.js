@@ -231,14 +231,14 @@ export const asyncRouterMap = [
                     import ('@/views/system/role/index'),
                 meta: { title: '角色管理', icon: 'product-list' }
             },
-            // {
-            //     path: 'allocMenu',
-            //     name: 'allocMenu',
-            //     component: () =>
-            //         import ('@/views/system/role/allocMenu'),
-            //     meta: { title: '分配菜单', icon: 'product-list' },
-            //     hidden:true
-            // },
+            {
+                path: 'allocMenu',
+                name: 'allocMenu',
+                component: () =>
+                    import ('@/views/system/role/allocMenu'),
+                meta: { title: '分配菜单', icon: 'product-list' },
+                hidden: true
+            },
             {
                 path: 'menuManage',
                 name: 'menu',

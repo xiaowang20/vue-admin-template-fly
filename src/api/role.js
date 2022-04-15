@@ -30,7 +30,7 @@ export function createRole(data) {
     })
 }
 /**
- * 获取全部角色信息
+ * 更新角色信息
  */
 export function updateRole(id, data) {
     return request({
@@ -48,6 +48,32 @@ export function deleteRole(data) {
         url: `/role/deleteRole/`,
         method: 'delete',
         data: data
+
+    })
+}
+/**
+ * 给角色分配菜单
+ * @param {*} roleId 
+ * @param {*} data 
+ * @returns 
+ */
+export function allocMenu(data) {
+    return request({
+        url: `/role/allocMenu/`,
+        method: 'post',
+        data: data
+
+    })
+}
+/**
+ * 通过roleId获取菜单信息
+ * @param {*} roleId 
+ * @returns 
+ */
+export function listMenuByRole(roleId) {
+    return request({
+        url: `/role/getMenuByRoleId/${roleId}`,
+        method: 'get'
 
     })
 }

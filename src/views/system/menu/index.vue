@@ -108,7 +108,7 @@
   </div>
 </template>
 <script>
-import {getMenuList,updateEnable,updateKeepAlive,updateRequireAuth} from '@/api/menu'
+import {getMenuList,updateEnable,updateKeepAlive,updateRequireAuth,deleteById} from '@/api/menu'
 export default {
 data(){
     return{
@@ -132,6 +132,25 @@ watch:{
       }
 },
 methods:{
+  /**
+   * 删除菜单
+   */
+  handleDelete(index,row){
+        this.$confirm('是否要删除该菜单', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteById(row.id).then(response => {
+            this.$message({
+              message: '删除成功',
+              type: 'success',
+              duration: 1000
+            });
+            this.initData();
+          });
+        });
+  },
     /**
      * 根据id修改菜单
      */

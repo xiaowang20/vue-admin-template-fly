@@ -67,7 +67,7 @@ export function createMenu(data) {
  */
 export function updateMenu(id, data) {
     return request({
-        url: '/menu/updateMenu' + id,
+        url: '/menu/updateMenu/' + id,
         method: 'post',
         data: data
     })
@@ -81,5 +81,26 @@ export function getMenuById(id) {
     return request({
         url: '/menu/getMenuById/' + id,
         method: 'get',
+    })
+}
+/**
+ * 通过id删除菜单
+ * @param {*} id 
+ * @returns 
+ */
+export function deleteById(id) {
+    return request({
+        url: '/menu/delete/' + id,
+        method: 'delete',
+    })
+}
+/**
+ * 树形结构查询所有菜单
+ * @returns 
+ */
+export function fetchTreeList() {
+    return request({
+        url: '/menu/tree2/list',
+        method: 'get'
     })
 }

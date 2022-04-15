@@ -4,11 +4,11 @@
              :rules="rules"
              ref="menuFrom"
              label-width="150px">
-      <el-form-item label="菜单名称：" prop="title">
+      <el-form-item label="菜单名称：" prop="name">
         <el-input v-model="menu.name"></el-input>
       </el-form-item>
       <el-form-item label="上级菜单：">
-        <el-select v-model="menu.parentId"
+        <el-select v-model="menu.parentid"
                    placeholder="请选择菜单">
           <el-option
             v-for="item in selectMenuList"
@@ -18,12 +18,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="前端path:" prop="name">
+      <el-form-item label="前端path:" prop="path">
         <el-input v-model="menu.path"></el-input>
       </el-form-item>
-      <el-form-item label="前端图标：" prop="icon">
-        <el-input v-model="menu.iconCls" style="width: 80%"></el-input>
-        <svg-icon style="margin-left: 8px" :icon-class="menu.iconCls"></svg-icon>
+      <el-form-item label="前端图标：" prop="iconCls">
+        <el-input v-model="menu.iconcls" style="width: 80%"></el-input>
+        <svg-icon style="margin-left: 8px" :icon-class="menu.iconcls"></svg-icon>
       </el-form-item>
       <el-form-item label="url">
         <el-input v-model="menu.url"></el-input>
@@ -44,7 +44,7 @@
         </el-radio-group>
       </el-form-item>
             <el-form-item label="是否需要授权">
-        <el-radio-group v-model="menu.requireAuth">
+        <el-radio-group v-model="menu.requireauth">
           <el-radio :label="true">是</el-radio>
           <el-radio :label="false">否</el-radio>
         </el-radio-group>
@@ -59,14 +59,14 @@
 <script>
   import {getMenuList, createMenu, updateMenu, getMenuById} from '@/api/menu';
     const defaultMenu = {
-    parentId: 1,
+    parentid: 1,
     name: '',
-    iconCls: '',
+    iconcls: '',
     enabled: true,
     url:'',
     path:'',
     component:'',
-    requireAuth:true,
+    requireauth:true,
     keepalive:true
 
   };
@@ -87,7 +87,7 @@ export default{
             {required: true, message: '请输入菜单名称', trigger: 'blur'},
             {min: 2, max: 140, message: '长度在 2 到 140 个字符', trigger: 'blur'}
           ],
-          iconCls: [
+          iconcls: [
             {required: true, message: '请输入前端图标', trigger: 'blur'},
             {min: 2, max: 140, message: '长度在 2 到 140 个字符', trigger: 'blur'}
           ]
@@ -118,6 +118,8 @@ export default{
             }).then(() => {
               if (this.isEdit) {
                   debugger
+                  console.log(this.menu)
+                  console.log(this.$route.query.id)
                 updateMenu(this.$route.query.id, this.menu).then(response => {
                   this.$message({
                     message: '修改成功',

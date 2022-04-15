@@ -149,6 +149,13 @@ export default {
     },
     methods:{
         /**
+         * 分配菜单
+         * 
+         */
+        handleSelectMenu(index,row){
+        this.$router.push({path:'/system/allocMenu',query:{roleId:row.id}})
+        },
+        /**
          * 批量删除
          */
         handleDelete(index,row){

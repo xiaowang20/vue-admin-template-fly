@@ -44,13 +44,7 @@ export function createAdmin(data) {
     })
 }
 
-export function updateAdmin(id, data) {
-    return request({
-        url: '/admin/update/' + id,
-        method: 'post',
-        data: data
-    })
-}
+
 
 export function updateStatus(id, params) {
     return request({
