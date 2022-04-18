@@ -1,5 +1,5 @@
 <template>
-  <!-- 表单 -->
+  <!-- 表格 -->
   <div style="margin-top: 10px">
     <el-table
       stripe

@@ -292,7 +292,7 @@ const defaultEmp = {
   email: "laowang@qq.com",
   phone: "18565558897",
   address: "岳阳市市云溪区",
-  departmentid: null,
+  departmentid: '',
   jobLevelid: 9,
   posid: 29,
   engageform: "劳务合同",
@@ -435,7 +435,7 @@ export default {
      */
     searvhViewHandleNodeClick(data) {
       this.inputDepName = data.name;
-      this.emp.departmentId = data.id;
+      this.emp.departmentid = data.id;
       this.popVisible = !this.popVisible;
     },
     /**

@@ -5,7 +5,7 @@ import request from '@/utils/request'
  */
 export function getList(params) {
     return request({
-        url: `Ec/list2`,
+        url: `EmpTrain/list1`,
         method: 'get',
         params: params
     })
@@ -16,9 +16,9 @@ export function getList(params) {
  * @param {*} data 
  * @returns 
  */
-export function updateEc(id, data) {
+export function updateEmpTrain(id, data) {
     return request({
-        url: `Ec/update/${id}`,
+        url: `EmpTrain/update/${id}`,
         method: 'put',
         data: data
     })

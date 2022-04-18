@@ -1,5 +1,32 @@
 <template>
 <div  class="app-container">
+          <!-- 搜索框 -->
+    <el-card class="filter-container" shadow="never">
+      <div>
+        <i class="el-icon-search"></i>
+        <span>筛选搜索</span>
+        <el-button
+          style="float:right"
+          type="primary"
+          @click="handleSearchList()"
+          size="small">
+          查询搜索
+        </el-button>
+        <el-button
+          style="float:right;margin-right: 15px"
+          @click="handleResetSearch()"
+          size="small">
+          重置
+        </el-button>
+      </div>
+      <div style="margin-top: 15px">
+        <el-form :inline="true" :model="pageParams" size="small" label-width="140px">
+          <el-form-item label="输入搜索：">
+            <el-input v-model="pageParams.keyword" class="input-width" placeholder="姓名" clearable></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-card>
 <!-- 表格 -->
 <div class="table-container">
       <el-table ref="ecTable"
@@ -9,8 +36,8 @@
         <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
-        <el-table-column label="员工id" width="100" align="center" :formatter="formatter">
-          <!-- <template slot-scope="scope">{{scope.row.eid}}</template> -->
+        <el-table-column label="员工" width="100" align="center">
+          <template slot-scope="scope">{{scope.row.employee.name}}</template>
         </el-table-column>
              <el-table-column label="奖罚日期" width="100" align="center">
           <template slot-scope="scope">{{scope.row.ecdate}}</template>
@@ -25,10 +52,11 @@
           <template slot-scope="scope">{{scope.row.remark}}</template>
         </el-table-column>
         <el-table-column label="奖惩类型" width="140" align="center">
-            <template slot-scope="scope">
-                <label v-if="scope.row.ectype==='0'">奖励</label>
-                <label v-else="scope.row.ectype==='1'">惩罚</label>
-                </template>
+            <template  slot-scope="scope">
+                <label v-if="scope.row.ectype=='0'">奖励</label>
+                <label v-else="scope.row.ectype=='1'">惩罚</label>
+            </template>
+
         </el-table-column>
                 <!-- 操作 -->
         <el-table-column label="操作" width="180" align="center">
@@ -59,12 +87,57 @@
         :total="total">
       </el-pagination>
     </div>
+    <!-- 编辑 -->
+     <el-dialog
+      :title="'编辑用户'"
+      :visible.sync="dialogVisible"
+      width="40%">
+      <el-form :model="Ec"
+               ref="EcForm"
+               label-width="150px" size="small">
+        <el-form-item label="奖罚日期:">
+          <el-input v-model="Ec.ecdate" style="width: 250px"></el-input>
+        </el-form-item>
+        <el-form-item label="奖罚原因:">
+          <el-input v-model="Ec.ecreason" style="width: 250px"></el-input>
+        </el-form-item>
+        <el-form-item label="奖罚分数：">
+          <el-input v-model="Ec.ecpoint" style="width: 250px"></el-input>
+        </el-form-item>
+        <el-form-item label="奖罚描述:">
+          <el-input v-model="Ec.remark" type="textarea" style="width: 250px"></el-input>
+        </el-form-item>
+        <el-form-item label="奖惩类型:">
+          <el-radio-group v-model="Ec.ectype">
+            <el-radio :label="0">奖励</el-radio>
+            <el-radio :label="1">惩罚</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleDialogConfirm()" size="small">确 定</el-button>
+      </span>
+    </el-dialog>
 </div>
 </template>
 <script>
 
-import {getList} from '@/api/ec'
-import {getAllById} from '@/api/employee'
+import {getList,updateEc} from '@/api/ec'
+const defaultListQuery ={
+   pageNum:1,
+  pageSize:5,
+  keyword:'',
+}
+const defaultEc={
+id:'',
+eid:'',
+ecdate:'',
+ecreason:'',
+ecpoint:'',
+remark:'',
+ectype:''
+}
 export default{
     name:'EcList',
     data(){
@@ -72,30 +145,56 @@ export default{
             listLoading:false,
             list:null,
             total:0,
-            pageParams:{
-                pageNum:1,
-                pageSize:5,
-                eId:'',
-            },
-            empName:''
+            pageParams: Object.assign({}, defaultListQuery),
+            Ec:Object.assign({}, defaultEc),
+            dialogVisible:false
+            
         })
     },
     created(){
         this.initData();
-        this.getEmpName();
     },
     methods:{
-        /**
-         * 根据员工id获取员工名字
-         */
-    formatter(row,column){
-        getAllById(row.eid).then(res=>{
-           this.empName = res.data.name;
-            return this.empName;
+            /**
+       * 打开编辑表单
+       */
+      handleUpdate(index,row){
+        this.dialogVisible=true;
+        this.Ec= Object.assign({}, row);
+      },
+      /**
+       * 编辑
+       */
+       handleDialogConfirm(){
+    this.$confirm('是否要确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            updateEc(this.Ec.id,this.Ec).then(response => {
+              this.$message({
+                message: '修改成功！',
+                type: 'success'
+              });
+              this.dialogVisible =false;
+              this.initData();
+            })
+        
         })
-       
-        }
-,
+      },
+    /**
+       * 搜索
+       */
+      handleSearchList(){
+          this.pageParams.pageNum=1;
+          this.initData();
+      },
+        /**
+         * 重置
+         */
+    handleResetSearch() {
+        this.pageParams = Object.assign({}, defaultListQuery);
+      },
    /**
      * 初始化数据
      */
@@ -105,6 +204,7 @@ export default{
         .then((res) => {
           this.loading = false;
           this.list = res.data.list;
+          console.log(this.list)
           this.total = res.data.total;
         });
     },

@@ -333,7 +333,7 @@ export default {
        * 搜索
        */
       handleSearchList(){
-        debugger
+        
           this.listQuery.pageNum=1;
           this.initData();
       },
@@ -394,7 +394,7 @@ export default {
          */
     handleResetSearch() {
         this.listQuery = Object.assign({}, defaultListQuery);
-      },
+      }
     }
 }
 </script>
